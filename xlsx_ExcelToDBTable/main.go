@@ -17,6 +17,8 @@ type MstNotification struct {
 	NotificationBody string `json:"notification_body"`
 	Type             string `json:"type"`
 	Role             string `json:"role"`
+	EmailSubjectLine string `json:"email_subject_line"`
+	EmailContent     string `json:"email_content"`
 }
 
 // host=localhost port=5432 user=postgres dbname=personDB password=root sslmode=disable
@@ -78,6 +80,12 @@ func main() {
 						break
 					case 5:
 						mstNot.Role = item.String()
+						break
+					case 6:
+						mstNot.EmailSubjectLine = item.String()
+						break
+					case 7:
+						mstNot.EmailContent = item.String()
 						break
 					}
 				}
