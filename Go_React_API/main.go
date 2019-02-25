@@ -108,12 +108,12 @@ func handlerequest() {
 
 	//Router to the diffrent functions
 	e.POST("/person", PostPerson)
-	e.POST("/SetUserPreference", SetUserPreference)
+	e.POST("/setUserPreference", SetUserPreference)
 
-	e.POST("/getfilteredperon", GetPersonsByPostData)
+	e.POST("/getfilteredperson", GetPersonsByPostData)
 
 	e.GET("/", helloWorld)
-	e.GET("/salrytotal", GetSalarySum)
+	e.GET("/salarytotal", GetSalarySum)
 	e.GET("/agesalarysum", GetSumOfAgeSalary)
 
 	e.GET("/person", GetAll)
@@ -136,15 +136,16 @@ func checkError(err error) {
 	}
 }
 
-//DBConnection
+//DBConnection function returns the database object
 func DBConnection() (*gorm.DB, error) {
 	db, err := gorm.Open("postgres",
-		`host=localhost 
-							port=5432 
-							user=postgres 
-							dbname=personDB 
-							password=root 
+		`host=localhost
+							port=5432
+							user=postgres
+							dbname=personDB
+							password=root
 			sslmode=disable`)
+		fmt.Println(`Database connected...`)
 	return db, err
 }
 
@@ -209,7 +210,7 @@ func SetUserPreference(c echo.Context) (err error) {
 	return c.JSON(http.StatusOK, &nup)
 }
 
-//PostPerson
+//PostPerson function returns preson
 func PostPerson(c echo.Context) (err error) {
 	db, err := DBConnection()
 	checkError(err)
