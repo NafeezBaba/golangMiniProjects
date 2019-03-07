@@ -37,8 +37,8 @@ const styles = theme => ({
 
 
 
-function personDataObjectGenerator(id, Fullname, Age, Salary, Mobile, Email, Address) {
-	console.log("​personData -> Firstname", Fullname)
+function peopleObjectGenerator(id, Fullname, Age, Salary, Mobile, Email, Address) {
+	console.log("​people -> Firstname", Fullname)
   return {id, Fullname, Age, Salary, Mobile, Email, Address};
 }
 
@@ -48,16 +48,14 @@ function CustomizedTable(props) {
   console.log("​CustomizedTable -> props", props)
   let personListData = null
   if (props.PersonObject) {
-    personListData = props.PersonObject.map((personData) => {
-      const ifContact = personData.Contact ? [personData.contact.mobile,
-        personData.address] : [0, 0, 0]
-        
-      const params = [personData.ID,personData.full_name, personData.age, personData.slary,
-        ...ifContact
+    personListData = props.PersonObject.map((people) => {
+            
+      const params = [people.ID,people.full_name, people.age, people.Salary,
+        people.Mobile, people.Email,people.Address
       ]
       console.log("​CustomizedTable -> params", params)
-     
-      return personDataObjectGenerator(...params)
+  
+      return peopleObjectGenerator(...params)
     })
   }
   

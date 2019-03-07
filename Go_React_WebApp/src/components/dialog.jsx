@@ -8,10 +8,10 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 // import Radio from '@material-ui/core/Radio';
-import RedioButton from './redio';
+// import RedioButton from './redio';
 // import RadioGroup from '@material-ui/core/RadioGroup';
 // import FormHelperText from '@material-ui/core/FormHelperText';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
+// import FormControlLabel from '@material-ui/core/FormControlLabel';
 // import FormControl from '@material-ui/core/FormControl';
 // import FormLabel from '@material-ui/core/FormLabel';
 import axios from 'axios'
@@ -30,22 +30,23 @@ export default class FormDialog extends React.Component {
     this.setState({ open: false });
   };
 
+  // this.onClick = this.PostPerson.bind(this)
   PostPerson(e) {
 	console.log("​FormDialog -> PostPerson -> e", e)
     const body = {
-      Firstname: '',
-      Lastname: '',
-      Gender: '',
-      Age: 24,
-      Address: {
-        City: '',
-        State: '',
-        Pin: '',
-      },
-      Contact: {
-        Mobile: '',
-        Email: ''
-      }
+      first_name :e.first_name,
+      last_name: e.last_name,
+      Gender: e.Gender,
+          Age: e.Age,
+              Address: {
+                City: e.City,
+                State: e.State,
+                Pin: e.Pin,
+              },
+          Contact: {
+              Mobile: e.Mobile,
+              Email: e.Email
+            }
     }
 
     axios.post(API_URL + '/person', body, {
@@ -84,7 +85,6 @@ export default class FormDialog extends React.Component {
             <TextField autoFocus margin="dense" id="FirstName" label="First Name"type="text"/>
             <TextField  margin="dense" id="LastName" label="Last Name"type="text"/>
             <TextField  margin="dense" id="Gender" label="Gender"type="text"/>
-                      <RedioButton/>
             
             <TextField  margin="dense" id="Age" label="Age"type="number"/>
             <TextField  margin="dense" id="Mobile" label="Mobile Number"type="text"/>
@@ -98,13 +98,12 @@ export default class FormDialog extends React.Component {
             
           </DialogContent>
           <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button type="submit" onClick={this.PostPerson.bind(this)} color="primary">
-              Subscribe
-            </Button>
-           
+              <Button onClick={this.handleClose} color="primary">
+                Cancel
+              </Button>
+              <Button type="submit" onClick={this.PostPerson} color="primary">
+                Subscribe
+              </Button>
           </DialogActions>
           </form>
         </Dialog>

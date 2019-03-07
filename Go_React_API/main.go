@@ -10,8 +10,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 
 	echo "github.com/labstack/echo"
@@ -66,10 +66,20 @@ type NotificationRole struct {
 	ConditionID    uint              `json:"condition_id"`
 }
 
+//GetPersonTable struct
+type GetPersonTable struct {
+	ID       int    `"id"`
+	Fullname string `json:"full_name"`
+	Age      int    `json:"age"`
+	Salary   int    `jaon:"salary"`
+	Address  string `"address"`
+	Mobile   string `"mobile"`
+	Email    string `"email"`
+}
+
 //Person struct
 type Person struct {
-	// gorm.Model
-	ID        int     `gorm:"primary_key:true;id"`
+	gorm.Model
 	Firstname string  `json:"first_name"`
 	Lastname  string  `json:"last_name"`
 	Age       int     `json:"age"`
@@ -81,8 +91,7 @@ type Person struct {
 
 //Address struct
 type Address struct {
-	// gorm.Model
-	ID    uint   `json:"id"`
+	gorm.Model
 	City  string `json:"city"`
 	State string `json:"state"`
 	Pin   string `json:"pin"`
@@ -90,8 +99,7 @@ type Address struct {
 
 //Contact struct
 type Contact struct {
-	// gorm.Model
-	ID     uint   `json:"id"`
+	gorm.Model
 	Mobile string `gorm:"not null;unique;mobile"`
 	Email  string `gorm:"not null;unique;email"`
 }
@@ -136,8 +144,8 @@ func checkError(err error) {
 
 //DBConnection function returns the database object
 func DBConnection() (*gorm.DB, error) {
-	db, err := gorm.Open("mysql",
-		`user:root@/personDB?charset=utf8&parseTime=True&loc=Local`)
+	db, err := gorm.Open(`postgres`, `host=localhost port=5433 user=postgres dbname=testone password=root sslmode=disable`)
+	checkError(err)
 	fmt.Println(`Database connected...`)
 	return db, err
 }
@@ -152,10 +160,10 @@ func initiatMigrate() {
 		&Person{},
 		&Address{},
 		&Contact{},
-		&MstNotification{},
-		&NotificationRole{},
-		&NotificationToken{},
-		&NotificationUserPreference{},
+		// &MstNotification{},
+		// &NotificationRole{},
+		// &NotificationToken{},
+		// &NotificationUserPreference{},
 	)
 }
 
@@ -226,11 +234,11 @@ func GetAll(c echo.Context) error {
 	checkError(err)
 	defer db.Close()
 
-	type People struct {
-		People json.RawMessage `json:"people"`
-	}
-	var ap People
-	Query := `select * from get_all_person()`
+	// type People struct {
+	// 	People json.RawMessage `json:"people"`
+	// }
+	var ap []GetPersonTable
+	Query := `select * from get_all_person_table()`
 	if err := db.Raw(Query).Scan(&ap).Error; err != nil {
 		fmt.Println("error", err)
 	}
@@ -376,7 +384,7 @@ func UpdatePerson(c echo.Context) error {
 	p := new(Person)
 	id, err := strconv.Atoi(c.Param("ID"))
 	checkError(err)
-	p.ID = id
+	p.ID = uint(id)
 
 	p.Firstname = n.Firstname
 	p.Lastname = n.Lastname

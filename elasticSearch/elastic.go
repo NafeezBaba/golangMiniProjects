@@ -62,10 +62,42 @@ type Shards struct {
 
 //Hits
 type Hits struct {
-	total    uint
-	maxScore *uint
-	hits     []uint
+	total     uint
+	max_score *uint
+	hits      []_source
 }
+
+type _source struct {
+	_index string
+	_type  string
+	_id    uint
+	_score float64
+	Person Person
+}
+
+// {
+// 	"_index": "person",
+// 	"_type": "_doc",
+// 	"_id": "2",
+// 	"_score": 1.0,
+// 	"_source": {
+// 		"ID": 2,
+// 		"first_name": "rohan",
+// 		"last_name": "bagul",
+// 		"age": 25,
+// 		"gender": "male",
+// 		"Address": {
+// 			"ID": 2,
+// 			"city": "nashik",
+// 			"state": "maharashtra"
+// 		},
+// 		"Contact": {
+// 			"ID": 2,
+// 			"mobile": "920",
+// 			"email": "r@g.com"
+// 		}
+// 	}
+// },
 
 //DBConnection function returns the database object
 func DBConnection() (*gorm.DB, error) {
@@ -81,15 +113,18 @@ func handlerequest() {
 	e.Use(middleware.Recover())
 
 	e.GET("/", helloWorld)
-	e.PUT("/createElasticSearchIndex", CreateIndex)
 
 	e.POST("/person", PostPerson)
 	e.GET("/person", GetAll)
 	e.GET("/person/:ID", GetByID)
+
+	e.PUT("/createElasticSearchIndex", CreateIndex)
 	e.GET("/getByIDElastic/:ID", GetByIDElastic)
+	e.GET("/getAllElastic", GetAllElastic)
 
 	e.PUT("/person/:ID", UpdatePerson)
 	e.DELETE("/person/:ID", DeletePerson)
+
 	e.Logger.Fatal(e.Start(":12345"))
 
 }
@@ -173,6 +208,22 @@ func GetAll(c echo.Context) error {
 	return c.JSON(http.StatusOK, &all)
 }
 
+//GetAllElastic records
+func GetAllElastic(c echo.Context) error {
+	db, err := DBConnection()
+	checkError(err)
+	defer db.Close()
+
+	GETIndex := `http://localhost:9200/person/_search?pretty=true&q=*:*`
+	response, err := http.Get(GETIndex)
+	if err != nil {
+		fmt.Printf("The HTTP request failed with error %s\n", err)
+	}
+	data, _ := ioutil.ReadAll(response.Body)
+	d := string(data)
+	return c.JSON(http.StatusOK, &d)
+}
+
 //GetByID one record by id
 func GetByID(c echo.Context) error {
 	db, err := DBConnection()
@@ -197,7 +248,6 @@ func GetByIDElastic(c echo.Context) error {
 		fmt.Printf("The HTTP request failed with error %s\n", err)
 	}
 	data, _ := ioutil.ReadAll(response.Body)
-	fmt.Println("DATA", string(data))
 	d := string(data)
 	return c.JSON(http.StatusOK, &d)
 }
